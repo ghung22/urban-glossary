@@ -2,18 +2,18 @@ import java.io.*;
 import java.util.*;
 
 /**
- * Store data from a dictionary file.
+ * Store data from a glossary file.
  */
-public class Dict {
+public class Glossary {
     String path = "";
     TreeMap<String, String[]> data = new TreeMap<String, String[]>();
 
     /**
-     * Constructor to get file path and read dictionary data.
+     * Constructor to get file path and read glossary data.
      * 
-     * @param path the path of the dictionary file
+     * @param path the path of the glossary file
      */
-    public Dict(String path) {
+    public Glossary(String path) {
         this.path = path.replace('\\', '/');
         try {
             Read();
@@ -138,10 +138,10 @@ public class Dict {
     }
 
     /**
-     * Print everything in the dictionary.
+     * Print everything in the glossary.
      */
     public void Print() {
-        System.out.println("(i) Printing content of Dict...");
+        System.out.println("(i) Printing content of Glossary...");
         for (Map.Entry<String, String[]> entry : data.entrySet()) {
             System.out.print(entry.getKey() + ": ");
             String[] values = entry.getValue();
