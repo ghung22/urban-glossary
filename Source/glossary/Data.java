@@ -1,20 +1,21 @@
+package glossary;
+
 import java.io.*;
 import java.util.*;
 
 /**
  * Store data from a glossary file.
  */
-public class Glossary {
-    String path = "";
-    TreeMap<String, String[]> data = new TreeMap<String, String[]>();
+public class Data extends Glossary {
+    private TreeMap<String, String[]> data = new TreeMap<String, String[]>();
 
     /**
-     * Constructor to get file path and read glossary data.
+     * Copy data from superclass and read glossary data.
      * 
-     * @param path the path of the glossary file
+     * @param glossary
      */
-    public Glossary(String path) {
-        this.path = path.replace('\\', '/');
+    protected Data(Glossary glossary) {
+        super(glossary);
         try {
             Read();
         } catch (IOException e) {
