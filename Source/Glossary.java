@@ -421,6 +421,13 @@ public class Glossary {
         System.out.println();
     }
 
+    /**
+     * Edit the definitions of a slang word if the provided keyword existed. 
+     * The program will enter edit mode for the keyword, the user wil be able to
+     * change a definition, or delete it.
+     * 
+     * @param key the keyword existing in the glossary
+     */
     public void EditSlang(String key) {
         Boolean exist = false;
         // Enter data (if no args given)
