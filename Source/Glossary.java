@@ -566,6 +566,10 @@ public class Glossary {
         System.out.println();
     }
 
+    /**
+     * Restore the old glossary by re-reading the 'path'. This will override the
+     * current csv with a new one.
+     */
     public void Reset() {
         String csvpath = getFileName() + ".csv";
         System.out.println("(?) Do you want to reset the glossary? All changes made will be lost. (y/N)");
