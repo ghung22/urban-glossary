@@ -214,7 +214,7 @@ public class Glossary {
             System.out.println("(i) The following results are found:");
             Print(results);
         }
-        glossary.WriteSearchHistory();
+        WriteSearchHistory();
         return results;
     }
 
@@ -253,7 +253,7 @@ public class Glossary {
             System.out.println("(i) The following results are found:");
             Print(results);
         }
-        glossary.WriteSearchHistory();
+        WriteSearchHistory();
         return results;
     }
 
@@ -360,8 +360,9 @@ public class Glossary {
         // Check existing
         for (Map.Entry<String, String[]> entry : data.entrySet()) {
             if (entry.getKey().equals(key)) {
+                exist = true;
                 String option = "";
-                System.out.print("(?) Found an existing entry: " + entry.getKey() + ": ");
+                System.out.print("(?) Found an existing entry '" + entry.getKey() + "': ");
                 for (String str : entry.getValue()) {
                     System.out.print(str + " || ");
                 }
@@ -407,7 +408,6 @@ public class Glossary {
                             break;
                     }
                 } while (option == "?");
-                exist = true;
                 modified = true;
                 break;
             }
@@ -417,6 +417,141 @@ public class Glossary {
         } else if (!exist) {
             data.put(key, new String[] { def });
             System.out.println("(i) Slang word added to glossary.");
+        }
+        System.out.println();
+    }
+
+    public void EditSlang(String key) {
+        Boolean exist = false;
+        // Enter data (if no args given)
+        if (key == "") {
+            System.out.println("(?) Enter keyword...");
+            System.out.print(" > ");
+            key = Main.sc.nextLine();
+        }
+        // Check existing
+        for (Map.Entry<String, String[]> entry : data.entrySet()) {
+            if (entry.getKey().equals(key)) {
+                exist = true;
+                String cmd = "";
+                String[] args, subargs;
+                System.out.println("(i) Found " + entry.getKey() + ": ");
+                String[] val = entry.getValue();
+                for (int i = 0; i < val.length; i++) {
+                    System.out.println("(i) - " + (i + 1) + ". " + val[i]);
+                }
+                System.out.println("(i) ----");
+                System.out.println("(i) Edit commands:");
+                System.out.println("(i) - (h)elp: Print this help.");
+                System.out.println("(i) - (p)rint: Print the definitions.");
+                System.out.println("(i) - (c)hange <id> <def>: Change the <id>th definition with <def>.");
+                System.out.println("(i) - (d)elete <id>: Delete the <id>th definition.");
+                System.out.println("(i) - (q)uit: Quit the edit menu.");
+                Boolean listening = true;
+                while (listening) {
+                    System.out.print(" e> ");
+                    cmd = Main.sc.nextLine();
+                    // Split into [<command>, <arguments>]
+                    args = cmd.split(" ", 2);
+                    if (args.length == 1) {
+                        args = new String[] { args[0], "" };
+                    }
+                    Integer id;  // Index of definition
+                    String option;  // Confirmation variable
+                    switch (args[0]) {
+                        case "help":
+                        case "h":
+                            System.out.println("(i) Edit commands:");
+                            System.out.println("(i) - (h)elp: Print this help.");
+                            System.out.println("(i) - (p)rint: Print the definitions.");
+                            System.out.println("(i) - (c)hange <id> <def>: Change the <id>th definition with <def>.");
+                            System.out.println("(i) - (d)elete <id>: Delete the <id>th definition.");
+                            System.out.println("(i) - (q)uit: Quit the edit menu.");
+                            break;
+
+                        case "print":
+                        case "p":
+                        case "":
+                            for (int i = 0; i < val.length; i++) {
+                                System.out.println("(i) - " + (i + 1) + ". " + val[i]);
+                            }
+                            System.out.println("----");
+                            break;
+
+                        case "change":
+                        case "c":
+                            subargs = args[1].split(" ", 2);
+                            if (subargs.length < 2) {
+                                System.out.println("(!) Missing arguments. Correct syntax is 'change <id> <def>'.");
+                            } else {
+                                id = Integer.parseInt(subargs[0]);
+                                if (id < 1 || id > val.length) {
+                                    System.out.println(
+                                            "(!) Invalid index, the possible range is [1," + val.length + "].");
+                                } else {
+                                    val[--id] = subargs[1];
+                                    data.replace(entry.getKey(), val);
+                                    System.out.println("(i) Definition changed.");
+                                }
+                            }
+                            modified = true;
+                            break;
+
+                        case "delete":
+                        case "d":
+                            // Split into 2 to discard any remaining arguments in subargs[1]
+                            subargs = args[1].split(" ", 2);
+                            id = Integer.parseInt(subargs[0]);
+                            if (id < 1 || id > val.length) {
+                                System.out.println("(!) Invalid index, the possible range is [1," + val.length + "].");
+                            } else {
+                                System.out.println("(?) Deleting '" + val[--id] + "'...");
+                                System.out.println("(?) Do you want to delete this definition? (y/N)");
+                                do {
+                                    System.out.print(" > ");
+                                    option = Main.sc.nextLine();
+                                    switch (option) {
+                                        case "yes":
+                                        case "y":
+                                            String[] newVal = new String[val.length - 1];
+                                            System.arraycopy(val, 0, newVal, 0, id);
+                                            System.arraycopy(val, id + 1, newVal, id, val.length - id - 1);
+                                            val = newVal;
+                                            data.replace(entry.getKey(), val);
+                                            System.out.println("(i) Definition deleted.");
+                                            break;
+
+                                        case "no":
+                                        case "n":
+                                        case "":
+                                            // Do nothing
+                                            break;
+
+                                        default:
+                                            System.out.println("(!) Unknown option '" + option + "'.");
+                                            option = "?";
+                                            break;
+                                    }
+                                } while (option == "?");
+                            }
+                            modified = true;
+                            break;
+
+                        case "quit":
+                        case "q":
+                            listening = false;
+                            break;
+
+                        default:
+                            System.out.println("(!) Unknown command '" + cmd + "'.");
+                            break;
+                    }
+                }
+                break;
+            }
+        }
+        if (!exist) {
+            System.out.println("(!) Slang word " + key + " not found.");
         }
         System.out.println();
     }

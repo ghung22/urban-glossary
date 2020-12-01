@@ -2,6 +2,7 @@ import java.util.Arrays;
 import java.util.Scanner;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 
 public class Main {
     public static final Scanner sc = new Scanner(System.in, "UTF-8");
@@ -164,12 +165,19 @@ public class Main {
                     }
                     break;
 
+                case "edit":
+                case "e":
+                    subargs = args[1].split(" ", 2);
+                    glossary.EditSlang(subargs[0]);
+                    break;
+
                 case "quit":
                 case "q":
                     // Check for changes in glossary
                     if (glossary.modified) {
+                        listening = false;
                         String option;
-                        System.out.println("(?) There are unsaved changes, do you want to save? (Y/n/c)")
+                        System.out.println("(?) There are unsaved changes, do you want to save? (Y/n/c)");
                         do {
                             System.out.print(" > ");
                             option = Main.sc.nextLine();
@@ -177,26 +185,32 @@ public class Main {
                                 case "yes":
                                 case "y":
                                 case "":
-                                    glossary.Write();
+                                    try {
+                                        glossary.Write();
+                                    } catch (IOException e) {
+                                        System.out.println("(!) Error reading file.");
+                                    }
                                     option = "c";
                                     break;
 
                                 case "no":
                                 case "n":
                                     // Stop listening for commands -> exit method
-                                    listening = false;
                                     option = "c";
                                     break;
 
                                 case "cancel":
                                 case "c":
+                                    listening = true;
                                     break;
-                                    
+
                                 default:
                                     System.out.println("(!) Unknown option '" + option + "'.");
                                     break;
                             }
                         } while (option != "c");
+                    } else {
+                        listening = false;
                     }
                     break;
 
@@ -222,26 +236,38 @@ public class Main {
                 System.out.println("(i) - (p)rint: Output data to terminal.");
                 System.out.println("(i) - (s)earch: Search entries by keyword/definition");
                 System.out.println("(i) - (a)dd: Add a slang word.");
+                System.out.println("(i) - (e)dit: Edit a slang word.");
                 System.out.println("(i) - (q)uit: Quit the program.");
                 break;
+
             case "print":
             case "p":
                 System.out.println("(i) Print commands (print <subcommand>):");
                 System.out.println("(i) - print: Output all entries in the glossary.");
                 System.out.println("(i) - print search: Output search history.");
                 break;
+
             case "search":
             case "s":
                 System.out.println("(i) Search commands (search <subcommand>):");
                 System.out.println("(i) - search key: Search entries by keyword (case-insensitive).");
                 System.out.println("(i) - search def: Search entries by definition (case-insensitive).");
                 break;
+
             case "add":
             case "a":
                 System.out.println("(i) Add commands:");
                 System.out.println("(i) - add: Ask for keyword and definition to add to glossary.");
                 System.out.println("(i) - add <key> <def>: Add <key> and <def> to glossary.");
                 break;
+
+            case "edit":
+            case "e":
+                System.out.println("(i) Edit commands:");
+                System.out.println("(i) - edit: Enter edit menu and ask for a keywword.");
+                System.out.println("(i) - edit <key>: Enter edit menu for <key>.");
+                break;
+
             default:
                 System.out.println("(i) No help exists for entered command.");
                 break;
@@ -250,5 +276,4 @@ public class Main {
 }
 
 // TODO: Detect change in txt => update csv
-// TODO: Update glossary for external changes
-// TODO: save changes
+// TODO: Update glossary for external changes in original file
