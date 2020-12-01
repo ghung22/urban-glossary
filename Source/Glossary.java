@@ -339,6 +339,13 @@ public class Glossary {
         System.out.println();
     }
 
+    /**
+     * Add a new slang word to glossary. If an entry exist, ask the user to decide
+     * whether they want to overwrite or append the definition.
+     * 
+     * @param key keyword to add to glossary
+     * @param def definition for that keyword
+     */
     public void AddSlang(String key, String def) {
         Boolean added = false, exist = false;
         // Enter data (if no args given)
