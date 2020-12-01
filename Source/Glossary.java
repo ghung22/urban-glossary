@@ -9,6 +9,7 @@ import java.util.*;
 public class Glossary {
     public String path;
     private TreeMap<String, String[]> data = new TreeMap<String, String[]>();
+    private TreeMap<Integer, String> data_id = new TreeMap<Integer, String>();
     private LinkedHashMap<Integer, String> search_history = new LinkedHashMap<Integer, String>();
     public Boolean modified = false;
 
@@ -45,6 +46,7 @@ public class Glossary {
         System.out.println("(@) Reading from '" + path + "'...");
         FileInputStream fis = new FileInputStream(path);
         Scanner s = new Scanner(fis, "UTF-8");
+        Integer id = 0;
         if (s.hasNextLine()) {
             // Skip columns name
             s.nextLine();
@@ -61,6 +63,7 @@ public class Glossary {
                     sec1[i] = sec1[i].trim(); // Remove whitespaces
                 }
                 data.put(sec[0], sec1);
+                data_id.put(id++, sec[0]);
             } else if (sec.length == 1) {
                 // If not, it's another definition of the above keyword
                 try {
@@ -101,6 +104,7 @@ public class Glossary {
         System.out.println("(@) Reading from '" + csvpath + "'...");
         FileInputStream fis = new FileInputStream(csvpath);
         Scanner s = new Scanner(fis, "UTF-8");
+        Integer id = 0;
         if (s.hasNextLine()) {
             // Skip columns name
             s.nextLine();
@@ -111,6 +115,7 @@ public class Glossary {
             String[] sec = line.split(",", 2);
             // Split multiple meanings by symbol '|'
             data.put(sec[0], sec[1].split("\\|"));
+            data_id.put(id++, sec[0]);
         }
         if (fis != null) {
             fis.close();
@@ -601,5 +606,18 @@ public class Glossary {
                     break;
             }
         } while (option == "?");
+    }
+
+    /**
+     * Output a random slang word.
+     */
+    public void Random() {
+        Random random = new Random();
+        String key = data_id.get(random.nextInt(data_id.size()));
+        TreeMap<String, String[]> randomMap = new TreeMap<String, String[]>();
+        randomMap.put(key, data.get(key));
+        System.out.println("(i) On this day slang word:");
+        System.out.print("(i) ");
+        Print(randomMap);
     }
 }

@@ -180,6 +180,11 @@ public class Main {
                     glossary.Reset();
                     break;
 
+                case "onthisday":
+                case "o":
+                    glossary.Random();
+                    break;
+
                 case "quit":
                 case "q":
                     // Check for changes in glossary
@@ -247,6 +252,7 @@ public class Main {
                 System.out.println("(i) - (a)dd: Add a slang word.");
                 System.out.println("(i) - (e)dit: Edit a slang word.");
                 System.out.println("(i) - (r)eset: Reset the glossary to the original data.");
+                System.out.println("(i) - (o)nthisday: Output a random slang word.");
                 System.out.println("(i) - (q)uit: Quit the program.");
                 break;
 
