@@ -86,9 +86,9 @@ public class Main {
      * @param args     arguments entered when launched the program
      */
     private static void getCommand(Glossary glossary, String[] args) {
-        String cmd = String.join(" ", args);  // Put args to cmd
+        String cmd = String.join(" ", args); // Put args to cmd
         Boolean listening = true;
-        printHelp("");  // Print command list first
+        printHelp(""); // Print command list first
         while (listening) {
             if (cmd.isEmpty()) {
                 System.out.print(" >> ");
@@ -144,7 +144,8 @@ public class Main {
                     } else if (subargs[0].equals("")) {
                         System.out.println("(!) Missing subcommand. Try 'search key <term>' or 'search def <term>'.");
                     } else {
-                        System.out.println("(!) Unknown subcommand '" + subargs[0] + "'.");
+                        System.out.println("(!) Unknown subcommand '" + subargs[0]
+                                + "' Try 'search key <term>' or 'search def <term>'.");
                     }
                     break;
 
@@ -165,7 +166,38 @@ public class Main {
 
                 case "quit":
                 case "q":
-                    listening = false;
+                    // Check for changes in glossary
+                    if (glossary.modified) {
+                        String option;
+                        System.out.println("(?) There are unsaved changes, do you want to save? (Y/n/c)")
+                        do {
+                            System.out.print(" > ");
+                            option = Main.sc.nextLine();
+                            switch (option) {
+                                case "yes":
+                                case "y":
+                                case "":
+                                    glossary.Write();
+                                    option = "c";
+                                    break;
+
+                                case "no":
+                                case "n":
+                                    // Stop listening for commands -> exit method
+                                    listening = false;
+                                    option = "c";
+                                    break;
+
+                                case "cancel":
+                                case "c":
+                                    break;
+                                    
+                                default:
+                                    System.out.println("(!) Unknown option '" + option + "'.");
+                                    break;
+                            }
+                        } while (option != "c");
+                    }
                     break;
 
                 default:
@@ -218,5 +250,5 @@ public class Main {
 }
 
 // TODO: Detect change in txt => update csv
-// TODO: by kw and def haven't yet filtered
-// TODO: "add" subcommand check, event on user chosen yes, append
+// TODO: Update glossary for external changes
+// TODO: save changes

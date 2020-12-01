@@ -214,6 +214,7 @@ public class Glossary {
             System.out.println("(i) The following results are found:");
             Print(results);
         }
+        glossary.WriteSearchHistory();
         return results;
     }
 
@@ -252,6 +253,7 @@ public class Glossary {
             System.out.println("(i) The following results are found:");
             Print(results);
         }
+        glossary.WriteSearchHistory();
         return results;
     }
 
@@ -368,11 +370,13 @@ public class Glossary {
                             data.replace(entry.getKey(), new String[] { def });
                             added = true;
                             break;
+
                         case "no":
                         case "n":
                         case "":
                             System.out.println("(i) Adding cancelled.");
                             break;
+
                         case "append":
                         case "a":
                             // Append new definition to keyword (Duplicate slang word)
@@ -382,14 +386,16 @@ public class Glossary {
                             data.replace(entry.getKey(), newVal);
                             added = true;
                             break;
+
                         case "help":
                         case "h":
                         case "?":
                             System.out.println(
                                     "(i) Options: y = yes, n = no (default), a = append definition, ? = show this help.");
                             break;
+
                         default:
-                            System.out.println("(!) Unknown command \"" + option + "\".");
+                            System.out.println("(!) Unknown option '" + option + "'.");
                             option = "?";
                             break;
                     }
