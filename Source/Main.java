@@ -4,10 +4,10 @@ import java.io.File;
 import java.io.FilenameFilter;
 
 public class Main {
-    static Scanner sc = new Scanner(System.in);
+    public static final Scanner sc = new Scanner(System.in, "UTF-8");
 
     public static void main(String[] args) {
-        System.out.println("\n---- WELCOME TO URBAN DICTIONARY ----\n");
+        System.out.println("\n---- WELCOME TO URBAN GLOSSARY ----\n");
 
         Glossary glossary = getGlossary(args);
         if (args.length != 0) {
@@ -47,6 +47,7 @@ public class Main {
             files = dir.list(filter);
             switch (files.length) {
                 case 0:
+                    // Do nothing
                     break;
                 case 1:
                     // There's only 1 file -> use it
@@ -56,13 +57,13 @@ public class Main {
                     break;
                 default:
                     // There're many files -> ask user
-                    System.out.print("(i) Existing glossary: ");
+                    System.out.print("(i) Found glossary: ");
                     for (String file : files) {
                         System.out.print(file + " ");
                     }
-                    System.out.println("(i) Choose one file to open...");
+                    System.out.println("(?) Choose one to open...");
                     while (!f.isFile()) {
-                        System.out.print("file > ");
+                        System.out.print(" > ");
                         path = sc.nextLine();
                         f = new File(path);
                     }
@@ -70,7 +71,8 @@ public class Main {
             }
         }
         while (!f.isFile()) {
-            System.out.print("path > ");
+            System.out.println("(?) Enter import path...");
+            System.out.print(" > ");
             path = sc.nextLine();
             f = new File(path);
         }
@@ -89,8 +91,14 @@ public class Main {
         printHelp("");  // Print command list first
         while (listening) {
             if (cmd.isEmpty()) {
-                System.out.print(" > ");
+                System.out.print(" >> ");
                 cmd = sc.nextLine();
+            }
+            // If user enters without a command -> do nothing
+            if (cmd.isEmpty()) {
+                continue;
+            } else {
+                System.out.println();
             }
             // Split into [<command>, <arguments>]
             args = cmd.split(" ", 2);
@@ -119,7 +127,7 @@ public class Main {
                     } else if (subargs[0].equals("search")) {
                         glossary.PrintSearchHistory();
                     } else {
-                        System.out.println("(!) Unknown subcommand \"" + subargs[0] + "\".");
+                        System.out.println("(!) Unknown subcommand '" + subargs[0] + "'.");
                     }
                     break;
 
@@ -133,8 +141,25 @@ public class Main {
                         glossary.SearchKeyword(subargs[1]);
                     } else if (subargs[0].equals("def")) {
                         glossary.SearchDefinition(subargs[1]);
+                    } else if (subargs[0].equals("")) {
+                        System.out.println("(!) Missing subcommand. Try 'search key <term>' or 'search def <term>'.");
                     } else {
-                        System.out.println("(!) Unknown subcommand \"" + subargs[0] + "\".");
+                        System.out.println("(!) Unknown subcommand '" + subargs[0] + "'.");
+                    }
+                    break;
+
+                case "add":
+                case "a":
+                    subargs = args[1].split(" ", 2);
+                    if (subargs.length == 1) {
+                        subargs = new String[] { subargs[0], "" };
+                    }
+                    if (subargs[0].equals("")) {
+                        glossary.AddSlang("", "");
+                    } else if (subargs.length == 2) {
+                        glossary.AddSlang(subargs[0], subargs[1]);
+                    } else {
+                        System.out.println("(!) Missing definition for '" + subargs[0] + "'.");
                     }
                     break;
 
@@ -144,11 +169,12 @@ public class Main {
                     break;
 
                 default:
-                    System.out.println("(!) Unknown command \"" + args[0] + "\".");
+                    System.out.println("(!) Unknown command '" + args[0] + "'.");
                     break;
             }
             cmd = "";
         }
+
     }
 
     /**
@@ -163,19 +189,26 @@ public class Main {
                 System.out.println("(i) - (h)elp: Print this help.");
                 System.out.println("(i) - (p)rint: Output data to terminal.");
                 System.out.println("(i) - (s)earch: Search entries by keyword/definition");
+                System.out.println("(i) - (a)dd: Add a slang word.");
                 System.out.println("(i) - (q)uit: Quit the program.");
                 break;
             case "print":
             case "p":
                 System.out.println("(i) Print commands (print <subcommand>):");
-                System.out.println("(i) - <no subcommand>: Output all entries in the glossary.");
-                System.out.println("(i) - search: Output search history.");
+                System.out.println("(i) - print: Output all entries in the glossary.");
+                System.out.println("(i) - print search: Output search history.");
                 break;
             case "search":
             case "s":
-                System.out.println("(i) Search commands (print <subcommand>):");
-                System.out.println("(i) - key: Search entries by keyword (case-insensitive, whole words).");
-                System.out.println("(i) - def: Search entries by definition (case-insensitive).");
+                System.out.println("(i) Search commands (search <subcommand>):");
+                System.out.println("(i) - search key: Search entries by keyword (case-insensitive).");
+                System.out.println("(i) - search def: Search entries by definition (case-insensitive).");
+                break;
+            case "add":
+            case "a":
+                System.out.println("(i) Add commands:");
+                System.out.println("(i) - add: Ask for keyword and definition to add to glossary.");
+                System.out.println("(i) - add <key> <def>: Add <key> and <def> to glossary.");
                 break;
             default:
                 System.out.println("(i) No help exists for entered command.");
@@ -186,4 +219,4 @@ public class Main {
 
 // TODO: Detect change in txt => update csv
 // TODO: by kw and def haven't yet filtered
-// TODO: search getCommand(), get remaining words to search
+// TODO: "add" subcommand check, event on user chosen yes, append

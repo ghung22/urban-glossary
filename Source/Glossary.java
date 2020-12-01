@@ -8,6 +8,7 @@ public class Glossary {
     public String path;
     private TreeMap<String, String[]> data = new TreeMap<String, String[]>();
     private LinkedHashMap<Integer, String> search_history = new LinkedHashMap<Integer, String>();
+    public Boolean modified = false;
 
     /**
      * Constructor to get file path and read glossary data.
@@ -42,16 +43,20 @@ public class Glossary {
         System.out.println("(@) Reading from " + path + "...");
         FileInputStream fis = new FileInputStream(path);
         Scanner s = new Scanner(fis, "UTF-8");
+        if (s.hasNextLine()) {
+            // Skip columns name
+            s.nextLine();
+        }
         while (s.hasNextLine()) {
             // Split the keyword and definition by the symbol '`'
             String line = s.nextLine();
             String[] sec = line.split("`", 2);
-            sec[0] = sec[0].trim();  // Remove whitespaces
+            sec[0] = sec[0].trim(); // Remove whitespaces
             if (sec.length >= 2) {
                 // If there is a '`', split multiple meanings by symbol '|'
                 String[] sec1 = sec[1].split("\\|");
                 for (int i = 0; i < sec1.length; i++) {
-                    sec1[i] = sec1[i].trim();  // Remove whitespaces
+                    sec1[i] = sec1[i].trim(); // Remove whitespaces
                 }
                 data.put(sec[0], sec1);
             } else if (sec.length == 1) {
@@ -297,7 +302,7 @@ public class Glossary {
         FileWriter fw = null;
         try {
             if (file.createNewFile()) {
-                // If history file not found, create new with 2 columns: Code  and Term
+                // If history file not found, create new with 2 columns: Code and Term
                 fw = new FileWriter(file);
                 fw.write("Code,Term\n");
                 if (fw != null) {
@@ -328,6 +333,77 @@ public class Glossary {
             String type = entry.getKey() == 0 ? "keyword" : "definition";
             System.out.print("By " + type + ": ");
             System.out.println(entry.getValue());
+        }
+        System.out.println();
+    }
+
+    public void AddSlang(String key, String def) {
+        Boolean added = false, exist = false;
+        // Enter data (if no args given)
+        if (key == "" && def == "") {
+            System.out.println("(?) Enter keyword...");
+            System.out.print(" > ");
+            key = Main.sc.nextLine();
+            System.out.println("(?) Enter definition...");
+            System.out.print(" > ");
+            def = Main.sc.nextLine();
+        }
+        // Check existing
+        for (Map.Entry<String, String[]> entry : data.entrySet()) {
+            if (entry.getKey().equals(key)) {
+                String option = "";
+                System.out.print("(?) Found an existing entry: " + entry.getKey() + ": ");
+                for (String str : entry.getValue()) {
+                    System.out.print(str + " || ");
+                }
+                System.out.println();
+                System.out.println("(?) Do you want to overwrite? (y/N/a/?)");
+                do {
+                    System.out.print(" > ");
+                    option = Main.sc.nextLine();
+                    switch (option) {
+                        case "yes":
+                        case "y":
+                            // Overwrite the entry
+                            data.replace(entry.getKey(), new String[] { def });
+                            added = true;
+                            break;
+                        case "no":
+                        case "n":
+                        case "":
+                            System.out.println("(i) Adding cancelled.");
+                            break;
+                        case "append":
+                        case "a":
+                            // Append new definition to keyword (Duplicate slang word)
+                            String[] oldVal = entry.getValue(), newVal = new String[oldVal.length + 1];
+                            System.arraycopy(oldVal, 0, newVal, 0, oldVal.length);
+                            newVal[oldVal.length] = def;
+                            data.replace(entry.getKey(), newVal);
+                            added = true;
+                            break;
+                        case "help":
+                        case "h":
+                        case "?":
+                            System.out.println(
+                                    "(i) Options: y = yes, n = no (default), a = append definition, ? = show this help.");
+                            break;
+                        default:
+                            System.out.println("(!) Unknown command \"" + option + "\".");
+                            option = "?";
+                            break;
+                    }
+                } while (option == "?");
+                exist = true;
+                modified = true;
+                break;
+            }
+        }
+        if (added) {
+            System.out.println("(i) Slang word updated to glossary.");
+        } else if (!exist) {
+            data.put(key, new String[] { def });
+            System.out.println("(i) Slang word added to glossary.");
         }
         System.out.println();
     }
