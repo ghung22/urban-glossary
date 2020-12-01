@@ -1,4 +1,6 @@
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 
 /**
@@ -40,7 +42,7 @@ public class Glossary {
             return;
         }
         // If a csv file doesn't exist, read from user's file and create one
-        System.out.println("(@) Reading from " + path + "...");
+        System.out.println("(@) Reading from '" + path + "'...");
         FileInputStream fis = new FileInputStream(path);
         Scanner s = new Scanner(fis, "UTF-8");
         if (s.hasNextLine()) {
@@ -96,7 +98,7 @@ public class Glossary {
      * @throws IOException
      */
     private void ReadCsv(String csvpath) throws IOException {
-        System.out.println("(@) Reading from " + csvpath + "...");
+        System.out.println("(@) Reading from '" + csvpath + "'...");
         FileInputStream fis = new FileInputStream(csvpath);
         Scanner s = new Scanner(fis, "UTF-8");
         if (s.hasNextLine()) {
@@ -128,10 +130,10 @@ public class Glossary {
     public void Write() throws IOException {
         String csvpath = getFileName() + ".csv";
         File file = new File(csvpath);
-        System.out.println("(@) Writing to " + csvpath + "...");
+        System.out.println("(@) Writing to '" + csvpath + "'...");
         FileWriter fw = null;
         if (file.createNewFile()) {
-            System.out.println("(i) Created " + csvpath + ".");
+            System.out.println("(i) Created '" + csvpath + "'.");
             fw = new FileWriter(file);
             fw.write("Keyword,Definition\n");
         }
@@ -408,23 +410,24 @@ public class Glossary {
                             break;
                     }
                 } while (option == "?");
-                modified = true;
                 break;
             }
         }
         if (added) {
             System.out.println("(i) Slang word updated to glossary.");
+            modified = true;
         } else if (!exist) {
             data.put(key, new String[] { def });
             System.out.println("(i) Slang word added to glossary.");
+            modified = true;
         }
         System.out.println();
     }
 
     /**
-     * Edit the definitions of a slang word if the provided keyword existed. 
-     * The program will enter edit mode for the keyword, the user wil be able to
-     * change a definition, or delete it.
+     * Edit the definitions of a slang word if the provided keyword existed. The
+     * program will enter edit mode for the keyword, the user wil be able to change
+     * a definition, or delete it.
      * 
      * @param key the keyword existing in the glossary
      */
@@ -463,8 +466,8 @@ public class Glossary {
                     if (args.length == 1) {
                         args = new String[] { args[0], "" };
                     }
-                    Integer id;  // Index of definition
-                    String option;  // Confirmation variable
+                    Integer id; // Index of definition
+                    String option; // Confirmation variable
                     switch (args[0]) {
                         case "help":
                         case "h":
@@ -561,5 +564,38 @@ public class Glossary {
             System.out.println("(!) Slang word " + key + " not found.");
         }
         System.out.println();
+    }
+
+    public void Reset() {
+        String csvpath = getFileName() + ".csv";
+        System.out.println("(?) Do you want to reset the glossary? All changes made will be lost. (y/N)");
+        String option;
+        do {
+            System.out.print(" > ");
+            option = Main.sc.nextLine();
+            switch (option) {
+                case "yes":
+                case "y":
+                    try {
+                        Files.delete(Path.of(csvpath));
+                        Read();
+                    } catch (IOException e) {
+                        System.out.println("(!) Error reading file.");
+                    }
+                    break;
+
+                case "no":
+                case "n":
+                case "":
+                    System.out.println("(i) Reseting cancelled.");
+                    System.out.println();
+                    break;
+
+                default:
+                    System.out.println("(!) Unknown option '" + option + "'.");
+                    option = "?";
+                    break;
+            }
+        } while (option == "?");
     }
 }

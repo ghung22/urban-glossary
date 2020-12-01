@@ -53,6 +53,7 @@ public class Main {
                 case 1:
                     // There's only 1 file -> use it
                     path = "./Data/" + files[0];
+                    path = path.replaceFirst("[.][^.]+$", "") + ".txt";
                     f = new File("./Data/" + files[0]);
                     System.out.println("(i) Found glossary: " + files[0]);
                     break;
@@ -76,6 +77,9 @@ public class Main {
             System.out.print(" > ");
             path = sc.nextLine();
             f = new File(path);
+            if (!f.isFile()) {
+                System.out.println("(!) File not exist.");
+            }
         }
         return new Glossary(path);
     }
@@ -171,6 +175,11 @@ public class Main {
                     glossary.EditSlang(subargs[0]);
                     break;
 
+                case "reset":
+                case "r":
+                    glossary.Reset();
+                    break;
+
                 case "quit":
                 case "q":
                     // Check for changes in glossary
@@ -237,6 +246,7 @@ public class Main {
                 System.out.println("(i) - (s)earch: Search entries by keyword/definition");
                 System.out.println("(i) - (a)dd: Add a slang word.");
                 System.out.println("(i) - (e)dit: Edit a slang word.");
+                System.out.println("(i) - (r)eset: Reset the glossary to the original data.");
                 System.out.println("(i) - (q)uit: Quit the program.");
                 break;
 
@@ -274,6 +284,3 @@ public class Main {
         }
     }
 }
-
-// TODO: Detect change in txt => update csv
-// TODO: Update glossary for external changes in original file
