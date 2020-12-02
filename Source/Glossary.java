@@ -520,7 +520,7 @@ public class Glossary {
                             if (id < 1 || id > val.length) {
                                 System.out.println("(!) Invalid index, the possible range is [1," + val.length + "].");
                             } else {
-                                System.out.println("(?) Deleting '" + val[--id] + "'...");
+                                System.out.println("(@) Deleting '" + val[--id] + "'...");
                                 System.out.println("(?) Do you want to delete this definition? (y/N)");
                                 do {
                                     System.out.print(" > ");
@@ -619,5 +619,265 @@ public class Glossary {
         System.out.println("(i) On this day slang word:");
         System.out.print("(i) ");
         Print(randomMap);
+    }
+
+    public void Game(String type, Integer stages) {
+        Boolean done = false;
+        Integer maxStage = 20, minStage = 1, score = 0;
+        String cmd;
+        String[] args;
+        if (type == "") {
+            type = "key";
+        }
+        System.out.println("(i) Game commands:");
+        System.out.println("(i) - (p)lay: Play the game.");
+        System.out.println("(i) - (c)hange key/def: Change game.");
+        System.out.println("(i) - (s)etstages <number>: Set number of stage, possible range is [" + minStage + ","
+                + maxStage + "].");
+        System.out.println("(i) - (h)elp: Print this help.");
+        System.out.println("(i) - (q)uit: Quit game menu.");
+        System.out.println("(i) ----");
+        while (!done) {
+            System.out.println("(i) Current game: " + type);
+            System.out.println("(i) Stages: " + stages);
+            System.out.println("(i) Last score: " + score);
+            System.out.println("(i) ----");
+            System.out.print(" g> ");
+            cmd = Main.sc.nextLine();
+            switch (cmd) {
+                case "play":
+                case "p":
+                    if (type == "key") {
+                        score = GameKey(stages);
+                    } else {
+                        score = GameDef(stages);
+                    }
+                    score = score * 100 / stages;
+                    System.out.println("-- Game complete! Your score: " + score + ".");
+                    break;
+
+                case "change":
+                case "c":
+                    args = cmd.split(" ", 3);
+                    cmd = args[1];
+                    break;
+
+                case "setstages":
+                case "s":
+                    args = type.split(" ", 3);
+                    stages = Integer.parseInt(args[1]);
+                    if (stages < minStage) {
+                        System.out.println("(!) Number too small, raised to " + minStage + ".");
+                        stages = minStage;
+                    } else if (stages > maxStage) {
+                        System.out.println("(!) Number too large, capped at " + maxStage + ".");
+                        stages = maxStage;
+                    }
+                    break;
+
+                case "help":
+                case "h":
+                    System.out.println("(i) Game commands:");
+                    System.out.println("(i) - (p)lay: Play the game.");
+                    System.out.println("(i) - (c)hange key/def: Change game.");
+                    System.out.println("(i) - (s)etstages <number>: Set number of stage, possible range is [" + minStage
+                            + "," + maxStage + "].");
+                    System.out.println("(i) - (h)elp: Print this help.");
+                    System.out.println("(i) - (q)uit: Quit game menu.");
+                    System.out.println("(i) ----");
+                    break;
+
+                case "quit":
+                case "q":
+                    done = true;
+                    break;
+
+                default:
+                    System.out.println("(!) Unknown command '" + cmd + "'.");
+                    break;
+            }
+        }
+    }
+
+    /**
+     * Generate a randomized list of unique glossary entries for a quiz. Using
+     * HashMap instead of TreeMap to store unsorted data. If glossary size is
+     * smaller than stages, there will be duplicate entries.
+     * 
+     * @param stages size of the return HashMap
+     * @return a HashMap containing random glossary entries
+     */
+    private HashMap<String, String> GenerateQuiz(Integer stages) {
+        Random random = new Random();
+        String key;
+        HashMap<String, String> quizMap = new HashMap<String, String>();
+        Boolean overlap = false;
+        if (data.size() < stages) {
+            overlap = true;
+        }
+        while (quizMap.size() < stages) {
+            key = data_id.get(random.nextInt(data_id.size()));
+            if (overlap || !quizMap.containsKey(key)) {
+                // Get random def
+                Integer id = random.nextInt(data.get(key).length);
+                quizMap.put(key, data.get(key)[id]);
+            }
+        }
+        return quizMap;
+    }
+
+    /**
+     * Initialize quiz game: guessing slang words and return the result.
+     * 
+     * @param stages number of questions
+     * @return the score (correct answers)
+     */
+    private Integer GameKey(Integer stages) {
+        System.out.println("-- Welcome to Quiz Game: Slang word");
+        HashMap<String, String> quizMap = GenerateQuiz(stages);
+        return GameStart(stages, quizMap, "key");
+    }
+
+    /**
+     * Initialize quiz game: definition quiz and return the result.
+     * 
+     * @param stages number of questions
+     * @return the score (correct answers)
+     */
+    private Integer GameDef(Integer stages) {
+        System.out.println("-- Welcome to Quiz Game: Definition");
+        HashMap<String, String> quizMap = GenerateQuiz(stages);
+        return GameStart(stages, quizMap, "def");
+    }
+
+    /**
+     * Start the game and return number of correct answers.
+     * 
+     * @param stages  number of questions
+     * @param quizMap availible questions
+     * @param type    type of game
+     * @return the score (correct answers)
+     */
+    private Integer GameStart(Integer stages, HashMap<String, String> quizMap, String type) {
+        Random random = new Random();
+        String[] key = quizMap.keySet().toArray(new String[stages]), def = quizMap.values().toArray(new String[stages]);
+        Integer score = 0;
+        for (int i = 0; i < quizMap.size(); i++) {
+            // Ask questions
+            if (type == "key") {
+                System.out.println((i + 1) + ". " + def[i] + ":");
+            } else {
+                System.out.println((i + 1) + ". What is " + key[i] + "?");
+            }
+            Integer ans = random.nextInt(4);
+            ArrayList<String> ansStrings = new ArrayList<String>();
+            // Give options
+            for (int a = 0; a < 4; a++) {
+                if (a == ans) {
+                    // The correct answer
+                    ansStrings.add(key[i]);
+                } else {
+                    Boolean added = false;
+                    while (!added) {
+                        // The wrong answers
+                        String badKey = data_id.get(random.nextInt(data_id.size()));
+                        if (type == "key") {
+                            if (!ansStrings.contains(badKey) || (data.size() < stages)) {
+                                ansStrings.add(badKey);
+                                added = true;
+                            }
+                        } else {
+                            Integer id = random.nextInt(data.get(badKey).length);
+                            String badDef = data.get(badKey)[id];
+                            if (!ansStrings.contains(badDef) || (data.size() < stages)) {
+                                ansStrings.add(badDef);
+                                added = true;
+                            }
+                        }
+                    }
+                }
+                switch (a) {
+                    case 0:
+                        System.out.print("A. ");
+                        break;
+
+                    case 1:
+                        System.out.print("B. ");
+                        break;
+
+                    case 2:
+                        System.out.print("C. ");
+                        break;
+
+                    case 3:
+                        System.out.print("D. ");
+                        break;
+                }
+                System.out.println(ansStrings.get(a) + ".");
+            }
+            String option = "";
+            while (option == "") {
+                System.out.print(" > ");
+                option = Main.sc.nextLine();
+                switch (option) {
+                    case "a":
+                    case "A":
+                    case "1":
+                        option = "0";
+                        break;
+
+                    case "b":
+                    case "B":
+                    case "2":
+                        option = "1";
+                        break;
+
+                    case "c":
+                    case "C":
+                    case "3":
+                        option = "2";
+                        break;
+
+                    case "d":
+                    case "D":
+                    case "4":
+                        option = "3";
+                        break;
+
+                    default:
+                        System.out.println("(!) Unknown option '" + option + "'. Valid ones are A/B/C/D/1/2/3/4.");
+                        option = "";
+                        break;
+                }
+            }
+            // Check if chosen answer is the correct one
+            // (also accounted for duplicated answers).
+            Integer opt = Integer.parseInt(option);
+            if (ansStrings.get(opt) == ansStrings.get(ans)) {
+                System.out.println(" * CORRECT!!!");
+                score++;
+            } else {
+                System.out.print(" * Wrong answer... The correct one is ");
+                switch (ans) {
+                    case 0:
+                        System.out.print("A. ");
+                        break;
+
+                    case 1:
+                        System.out.print("B. ");
+                        break;
+
+                    case 2:
+                        System.out.print("C. ");
+                        break;
+
+                    case 3:
+                        System.out.print("D. ");
+                        break;
+                }
+                System.out.println(ansStrings.get(ans) + ".");
+            }
+        }
+        return score;
     }
 }

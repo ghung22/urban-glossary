@@ -185,6 +185,17 @@ public class Main {
                     glossary.Random();
                     break;
 
+                case "game":
+                case "g":
+                    subargs = args[1].split(" ", 3);
+                    if (subargs.length == 1) {
+                        subargs = new String[] { subargs[0], "5", "" };
+                    } else if (subargs.length == 2) {
+                        subargs = new String[] { subargs[0], subargs[1], "" };
+                    }
+                    glossary.Game(subargs[0], Integer.parseInt(subargs[1]));
+                    break;
+
                 case "quit":
                 case "q":
                     // Check for changes in glossary
@@ -253,35 +264,46 @@ public class Main {
                 System.out.println("(i) - (e)dit: Edit a slang word.");
                 System.out.println("(i) - (r)eset: Reset the glossary to the original data.");
                 System.out.println("(i) - (o)nthisday: Output a random slang word.");
+                System.out.println("(i) - (g)ame: Play a game.");
                 System.out.println("(i) - (q)uit: Quit the program.");
                 break;
 
             case "print":
             case "p":
-                System.out.println("(i) Print commands (print <subcommand>):");
+                System.out.println("(i) Print commands (print <type>):");
                 System.out.println("(i) - print: Output all entries in the glossary.");
                 System.out.println("(i) - print search: Output search history.");
                 break;
 
             case "search":
             case "s":
-                System.out.println("(i) Search commands (search <subcommand>):");
+                System.out.println("(i) Search commands (search <type>):");
                 System.out.println("(i) - search key: Search entries by keyword (case-insensitive).");
                 System.out.println("(i) - search def: Search entries by definition (case-insensitive).");
                 break;
 
             case "add":
             case "a":
-                System.out.println("(i) Add commands:");
+                System.out.println("(i) Add commands (add <key> <def>):");
                 System.out.println("(i) - add: Ask for keyword and definition to add to glossary.");
                 System.out.println("(i) - add <key> <def>: Add <key> and <def> to glossary.");
                 break;
 
             case "edit":
             case "e":
-                System.out.println("(i) Edit commands:");
+                System.out.println("(i) Edit commands (edit <key>):");
                 System.out.println("(i) - edit: Enter edit menu and ask for a keywword.");
                 System.out.println("(i) - edit <key>: Enter edit menu for <key>.");
+                break;
+
+            case "game":
+            case "g":
+                System.out.println("(i) Game commands (game <type> <stages>):");
+                System.out.println("(i) - game: Enter game menu.");
+                System.out.println("(i) - game key: Guessing slang words.");
+                System.out.println("(i) - game def: Definition quiz.");
+                System.out.println("(i) - game key 8: Guessing 8 slang words.");
+                System.out.println("(i) - game def 12: Definition quiz with 12 questions.");
                 break;
 
             default:
