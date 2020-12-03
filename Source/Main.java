@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 
+// References are marked with 'REF' keywords
+
 public class Main {
     public static final Scanner sc = new Scanner(System.in, "UTF-8");
 
@@ -44,7 +46,7 @@ public class Main {
                 public boolean accept(File f, String name) {
                     return !name.startsWith(".") && name.endsWith(".csv");
                 }
-            };
+            };  // REF: https://stackabuse.com/java-list-files-in-a-directory/
             files = dir.list(filter);
             switch (files.length) {
                 case 0:

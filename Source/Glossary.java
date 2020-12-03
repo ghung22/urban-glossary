@@ -3,6 +3,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
+// References are marked with 'REF' keywords
+
 /**
  * Store data from a glossary file.
  */
@@ -68,6 +70,7 @@ public class Glossary {
                 // If not, it's another definition of the above keyword
                 try {
                     // Split multiple meanings and joins the ones added before
+                    // REF: https://www.javatpoint.com/how-to-merge-two-arrays-in-java
                     String[] extArray = sec[0].split("\\|");
 
                     String last = data.lastKey();
@@ -145,6 +148,7 @@ public class Glossary {
         if (fw == null) {
             fw = new FileWriter(file);
         }
+        // REF: https://www.geeksforgeeks.org/how-to-iterate-over-a-treemap-in-java/
         for (Map.Entry<String, String[]> entry : data.entrySet()) {
             fw.write(entry.getKey() + ",");
             String[] values = entry.getValue();
@@ -192,6 +196,8 @@ public class Glossary {
      * @return the path leading to the input file, without the extension
      */
     private String getFileName() {
+        // REF:
+        // https://stackoverflow.com/questions/924394/how-to-get-the-filename-without-the-extension-in-java
         return path.replaceFirst("[.][^.]+$", "");
     }
 
@@ -612,6 +618,8 @@ public class Glossary {
      * Output a random slang word.
      */
     public void Random() {
+        // REF:
+        // https://stackoverflow.com/questions/12385284/how-to-select-a-random-key-from-a-hashmap-in-java/12385392
         Random random = new Random();
         String key = data_id.get(random.nextInt(data_id.size()));
         TreeMap<String, String[]> randomMap = new TreeMap<String, String[]>();
@@ -771,7 +779,7 @@ public class Glossary {
             }
             Integer ans = random.nextInt(4);
             ArrayList<String> ansStrings = new ArrayList<String>();
-            // Give options
+            // Create options
             for (int a = 0; a < 4; a++) {
                 if (a == ans) {
                     // The correct answer
