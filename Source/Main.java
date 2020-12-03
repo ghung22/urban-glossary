@@ -185,6 +185,12 @@ public class Main {
                     glossary.EditSlang(subargs[0]);
                     break;
 
+                case "delete":
+                case "d":
+                    subargs = args[1].split(" ", 2);
+                    glossary.DeleteSlang(subargs[0]);
+                    break;
+
                 case "reset":
                 case "r":
                     glossary.Reset();
@@ -272,6 +278,7 @@ public class Main {
                 System.out.println("(i) - (s)earch: Search entries by keyword/definition");
                 System.out.println("(i) - (a)dd: Add a slang word.");
                 System.out.println("(i) - (e)dit: Edit a slang word.");
+                System.out.println("(i) - (d)elete: Delete a slang word.");
                 System.out.println("(i) - (r)eset: Reset the glossary to the original data.");
                 System.out.println("(i) - (o)nthisday: Output a random slang word.");
                 System.out.println("(i) - (g)ame: Play a game.");
@@ -304,6 +311,13 @@ public class Main {
                 System.out.println("(i) Edit commands (edit <key>):");
                 System.out.println("(i) - edit: Enter edit menu and ask for a keywword.");
                 System.out.println("(i) - edit <key>: Enter edit menu for <key>.");
+                break;
+
+            case "delete":
+            case "d":
+                System.out.println("(i) Delete commands (delete <key>):");
+                System.out.println("(i) - delete: Ask for keyword to delete from glossary.");
+                System.out.println("(i) - delete <key>: Delete slang word <key> from glossary.");
                 break;
 
             case "game":

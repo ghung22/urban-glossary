@@ -575,6 +575,65 @@ public class Glossary {
     }
 
     /**
+     * Delete a slang word from glossary. If an entry exist, ask the user to
+     *  confirm deletion. If not, abort.
+     * 
+     * @param key keyword to remove from glossary
+     */
+    public void DeleteSlang(String key) {
+        Boolean deleted = false, exist = false;
+        // Enter data (if no args given)
+        if (key == "") {
+            System.out.println("(?) Enter keyword...");
+            System.out.print(" > ");
+            key = Main.sc.nextLine();
+        }
+        // Check existing
+        for (Map.Entry<String, String[]> entry : data.entrySet()) {
+            if (entry.getKey().equals(key)) {
+                exist = true;
+                String option = "";
+                System.out.print("(?) Found '" + entry.getKey() + "': ");
+                for (String str : entry.getValue()) {
+                    System.out.print(str + " || ");
+                }
+                System.out.println();
+                System.out.println("(?) Are you sure to delete? (y/N)");
+                do {
+                    System.out.print(" > ");
+                    option = Main.sc.nextLine();
+                    switch (option) {
+                        case "yes":
+                        case "y":
+                            data.remove(key);
+                            deleted = true;
+                            break;
+
+                        case "no":
+                        case "n":
+                        case "":
+                            System.out.println("(i) Deleting cancelled.");
+                            break;
+
+                        default:
+                            System.out.println("(!) Unknown option '" + option + "'. Valid ones are 'y' and 'n'.");
+                            option = "?";
+                            break;
+                    }
+                } while (option == "?");
+                break;
+            }
+        }
+        if (deleted) {
+            System.out.println("(i) Slang word deleted from glossary.");
+            modified = true;
+        } else if (!exist) {
+            System.out.println("(i) Slang word not exists.");
+        }
+        System.out.println();
+    }
+
+    /**
      * Restore the old glossary by re-reading the 'path'. This will override the
      * current csv with a new one.
      */

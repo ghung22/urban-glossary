@@ -12,7 +12,7 @@ Lý do: Làm đầy đủ các chức năng đã được yêu cầu.
 
 4. Chức năng add 1 slang words mới. Nếu slang words trùng thì thông báo cho người dùng, confirm có overwrite hay duplicate ra 1 slang word mới.
 Điểm chấm: 10
-Lý do: Làm đầy đủ các chức năng đã được yêu cầu.
+Lý do: Làm đầy đủ các chức năng đã được yêu cầu (Note: Thay vì duplicate thì em append nghĩa cho từ đó).
 
 5. Chức năng edit 1 slang word.
 Điểm chấm: 10
