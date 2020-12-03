@@ -6,6 +6,13 @@ import java.io.IOException;
 
 // References are marked with 'REF' keywords
 
+/* Percentage of references (line refereced / total lines):
+ * Main: 10 lines (1 REF) -> ~= 3.2%
+ * Glossary: 10+1+1+2 =14 lines (4 REF) -> ~= 1.5%
+ * ---
+ * TOTAL: 4.6%
+*/
+
 public class Main {
     public static final Scanner sc = new Scanner(System.in, "UTF-8");
 
@@ -39,6 +46,7 @@ public class Main {
         File f = new File(path);
         if (!f.isFile()) {
             // Check for existing csv files in Data directory
+            // REF: https://stackabuse.com/java-list-files-in-a-directory/
             String[] files;
             File dir = new File("./Data");
             FilenameFilter filter = new FilenameFilter() {
@@ -46,7 +54,7 @@ public class Main {
                 public boolean accept(File f, String name) {
                     return !name.startsWith(".") && name.endsWith(".csv");
                 }
-            };  // REF: https://stackabuse.com/java-list-files-in-a-directory/
+            };
             files = dir.list(filter);
             switch (files.length) {
                 case 0:
