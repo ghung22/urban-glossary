@@ -52,7 +52,7 @@ public class Main {
             FilenameFilter filter = new FilenameFilter() {
                 @Override
                 public boolean accept(File f, String name) {
-                    return !name.startsWith(".") && name.endsWith(".csv");
+                    return !name.startsWith(".") && !name.endsWith(".hist.csv") && name.endsWith(".csv");
                 }
             };
             files = dir.list(filter);

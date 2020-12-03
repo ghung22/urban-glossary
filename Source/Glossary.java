@@ -323,11 +323,8 @@ public class Glossary {
                 if (fw != null) {
                     fw.close();
                 }
-                return;
             }
-            if (fw == null) {
-                fw = new FileWriter(file);
-            }
+            fw = new FileWriter(file, true);
             for (Map.Entry<Integer, String> entry : search_history.entrySet()) {
                 fw.write(entry.getKey() + "," + entry.getValue() + "\n");
             }
